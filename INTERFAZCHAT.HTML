@@ -221,7 +221,7 @@
         <button class="send-btn py-3" id="startBtn">ENTRAR AL CHAT</button>
     </div>
 
-    <div id="chatContainer" class="comic-panel">
+    <div id="               chatContainer" class="comic-panel">
         <header class="comic-header">
             <img id="headerAvatarImg" src="" class="header-avatar border-2 border-black">
             <div class="header-title" id="displayUsername">USUARIO</div>
@@ -313,11 +313,22 @@
             
             chatArea.scrollTop = chatArea.scrollHeight;
         }
+
+        socket.on('recibir_mensaje', function(data) {
+            // Verificamos si el mensaje es nuestro para aplicarle el estilo "sent" (derecha) o "received" (izquierda)
+            const isSent = data.name === userProfile.name;
+            addMessage(data.text, isSent, data.name, data.photo);
+        });
+        
         function handleSend() {
             const text = userInput.value.trim();
             if (text === "") return;
             addMessage(text, true, userProfile.name, userProfile.photo);
-            
+            socket.emit('enviar_mensaje', {
+                text: text,
+                name: userProfile.name,
+                photo: userProfile.photo
+            });
             userInput.value = "";
             userInput.focus();
         }
